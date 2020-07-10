@@ -24,6 +24,7 @@ public:
 	dnacnt_t mec();
 	double mecScore();
 	double siteCostScore();
+	double objective();
 	double score();
 	double score(dnaweight_t mec);
 

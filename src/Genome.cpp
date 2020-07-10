@@ -4,6 +4,10 @@
 
 #define SAHAP_GENOME_DEBUG 0
 
+#ifndef POISSON_OBJECTIVE
+#define POISSON_OBJECTIVE 0
+#endif
+
 using namespace std;
 
 namespace SAHap {
@@ -47,6 +51,15 @@ double Genome::siteCostScore() {
 	double maxCost = this->haplotypes.size() * this->haplotypes[0].size();
 	return out / maxCost;
 }
+
+double Genome::objective() {
+#if POISSON_OBJECTIVE
+	return this->siteCostScore();
+#else
+	return this->mecScore();
+#endif
+}
+
 
 double Genome::score(dnaweight_t mec) {
 	double maxMec = this->haplotypes.size() * this->haplotypes[0].size();
@@ -159,9 +172,9 @@ void Genome::revertMove() {
 
 void Genome::iteration() {
 	// Run an iteration
-	auto oldScore = this->siteCostScore();
+	auto oldScore = this->objective();
 	this->move();
-	auto newScore = this->siteCostScore();
+	auto newScore = this->objective();
 
 	uniform_real_distribution<double> distribution(0, 1);
 	double chanceToKeep = this->acceptance(newScore, oldScore);
